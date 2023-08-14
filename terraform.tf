@@ -8,5 +8,6 @@ terraform {
     }
   }
 
+  // TODO: Use Resource Manager instead.
   backend "local" {}
 }
