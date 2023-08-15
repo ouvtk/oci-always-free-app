@@ -14,3 +14,9 @@ variable "project_name" {
   type        = string
   default     = "app"
 }
+
+variable "number_of_instances" {
+  description = "Number of simultaneously running instances."
+  type        = number
+  default     = 2
+}
