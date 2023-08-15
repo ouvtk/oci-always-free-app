@@ -20,10 +20,6 @@
 // Alerting, logging and monitoring.
 // Terraform state management by OCI.
 
-locals {
-  project = "app"
-}
-
 data "oci_identity_compartment" "parent" {
   id = var.parent_compartment_id
 }
@@ -58,7 +54,7 @@ resource "oci_core_internet_gateway" "internet_gw" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = data.oci_core_vcn.app.id
 
-  display_name = local.project
+  display_name = var.project_name
 }
 
 // TODO: What to do with subnets if existing VCN is used?
@@ -67,7 +63,7 @@ resource "oci_core_subnet" "app_load_balancer" {
   vcn_id         = data.oci_core_vcn.app.id
 
   cidr_block   = "10.0.1.0/24"
-  display_name = "${local.project}-lb"
+  display_name = "${var.project_name}-lb"
 }
 
 // Instances subnet is meant to be private, but Always Free tier doesn't allow any NAT, only Internet Gateways.
@@ -76,15 +72,19 @@ resource "oci_core_subnet" "app_compute" {
   vcn_id         = data.oci_core_vcn.app.id
 
   cidr_block   = "10.0.2.0/24"
-  display_name = "${local.project}-compute"
+  display_name = "${var.project_name}-compute"
 }
 
 resource "oci_core_route_table" "app_load_balancer" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = data.oci_core_vcn.app.id
 
+  display_name = "${var.project_name}-lb"
   route_rules {
-
+    description       = "Route all egress towards the internet gateway"
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.internet_gw.id
   }
 }
 
@@ -92,7 +92,27 @@ resource "oci_core_route_table" "app_compute" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = data.oci_core_vcn.app.id
 
+  display_name = "${var.project_name}-compute"
   route_rules {
-
+    description       = "Route all egress towards the internet gateway"
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.internet_gw.id
   }
+}
+
+resource "oci_load_balancer_load_balancer" "public" {
+  compartment_id = data.oci_identity_compartment.app.id
+  display_name   = "${var.project_name}-public-lb"
+
+  // TODO:
+  // network_security_group_ids = []
+
+  is_private = false
+  shape      = "Flexible"
+  shape_details {
+    maximum_bandwidth_in_mbps = 10
+    minimum_bandwidth_in_mbps = 10
+  }
+  subnet_ids = [oci_core_subnet.app_load_balancer.id]
 }
