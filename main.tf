@@ -49,19 +49,20 @@ resource "oci_load_balancer_backend_set" "app" {
   }
 }
 
-resource "oci_core_network_security_group" "lb" {
+resource "oci_core_network_security_group" "public_lb" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = oci_core_vcn.app.id
 
   display_name = "${var.project_name}-lb"
 }
 
-resource "oci_core_network_security_group_security_rule" "lb-internet-ingress" {
-  network_security_group_id = oci_core_network_security_group.lb.id
+resource "oci_core_network_security_group_security_rule" "public_lb_internet_ingress" {
+  network_security_group_id = oci_core_network_security_group.public_lb.id
 
+  description = "Allow ingress from anywhere from the internet."
   direction   = "INGRESS"
-  protocol    = "6"         # 6 is HTTP based of IANA protocol numbers.
-  source      = "0.0.0.0/0" # Allow ingress from anywhere from the internet.
+  protocol    = "6" # 6 is HTTP based of IANA protocol numbers.
+  source      = "0.0.0.0/0"
   source_type = "CIDR_BLOCK"
   stateless   = false
 
@@ -77,8 +78,8 @@ resource "oci_core_network_security_group_security_rule" "lb-internet-ingress" {
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "lb-to-compute" {
-  network_security_group_id = oci_core_network_security_group.lb.id
+resource "oci_core_network_security_group_security_rule" "public_lb_to_compute" {
+  network_security_group_id = oci_core_network_security_group.public_lb.id
 
   direction        = "EGRESS"
   protocol         = "6"

@@ -1,9 +1,5 @@
-data "oci_identity_compartment" "parent" {
-  id = var.parent_compartment_id
-}
-
 resource "oci_identity_compartment" "app" {
-  compartment_id = data.oci_identity_compartment.parent.id
+  compartment_id = var.tenancy_ocid
 
   name        = var.new_compartment_name
   description = "The compartment to contain all infrastructure for the always free application."

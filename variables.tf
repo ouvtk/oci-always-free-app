@@ -4,12 +4,6 @@ variable "new_compartment_name" {
   type        = string
 }
 
-variable "parent_compartment_id" {
-  description = "The OCID of the compartment to create a new one within"
-  default     = var.tenancy_ocid
-  type        = string
-}
-
 variable "project_name" {
   description = "The name of the project to use as a prefix in resource names"
   default     = "app"
@@ -23,7 +17,7 @@ variable "number_of_instances" {
 }
 
 variable "tenancy_ocid" {
-  description = "The OCID of the root tenancy."
+  description = "The OCID of the root tenancy to create a new one within."
   type        = string
 }
 
