@@ -46,6 +46,7 @@ resource "oci_load_balancer_backend_set" "app" {
   health_checker {
     protocol = "HTTP"
     port     = 80
+    url_path = "/health"
   }
 }
 
