@@ -37,14 +37,72 @@ resource "oci_load_balancer_load_balancer" "public" {
 }
 
 resource "oci_load_balancer_backend_set" "app" {
-  // TODO: Health checker
   load_balancer_id = oci_load_balancer_load_balancer.public.id
 
   name   = "${var.project_name}-compute"
   policy = "IP_HASH"
 
+  // TODO: Make sure health checker works.
   health_checker {
     protocol = "HTTP"
     port     = 80
   }
 }
+
+resource "oci_core_network_security_group" "lb" {
+  compartment_id = data.oci_identity_compartment.app.id
+  vcn_id         = oci_core_vcn.app.id
+
+  display_name = "${var.project_name}-lb"
+}
+
+resource "oci_core_network_security_group_security_rule" "lb-internet-ingress" {
+  network_security_group_id = oci_core_network_security_group.lb.id
+
+  direction   = "INGRESS"
+  protocol    = "6"         # 6 is HTTP based of IANA protocol numbers.
+  source      = "0.0.0.0/0" # Allow ingress from anywhere from the internet.
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 80
+      min = 80
+    }
+    source_port_range {
+      max = 80
+      min = 80
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "lb-to-compute" {
+  network_security_group_id = oci_core_network_security_group.lb.id
+
+  direction        = "EGRESS"
+  protocol         = "6"
+  destination      = oci_core_network_security_group.compute.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  stateless        = false
+
+  tcp_options {
+    destination_port_range {
+      max = 80
+      min = 80
+    }
+    source_port_range {
+      max = 80
+      min = 80
+    }
+  }
+}
+
+resource "oci_core_network_security_group" "compute" {
+  compartment_id = data.oci_identity_compartment.app.id
+  vcn_id         = oci_core_vcn.app.id
+
+  display_name = "${var.project_name}-compute"
+}
+
+// TODO: Add database access to compute NSG.
