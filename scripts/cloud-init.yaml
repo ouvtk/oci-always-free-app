@@ -11,6 +11,8 @@ runcmd:
  - yum install -y oracle-cloud-agent nginx
  - echo "Launching nginx for health check"
  - systemctl enable nginx --now
+ - echo "Allowing port 80 on the firewall"
+ - firewall-offline-cmd --add-port=80/tcp && systemctl restart firewalld
 
 final_message: "The system is finally up, after $UPTIME seconds"
 output: {all: '| tee -a /root/cloud-init-output.log'}

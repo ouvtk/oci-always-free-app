@@ -52,6 +52,15 @@ resource "oci_load_balancer_backend_set" "app" {
   }
 }
 
+resource "oci_load_balancer_listener" "app" {
+  load_balancer_id = oci_load_balancer_load_balancer.public.id
+
+  default_backend_set_name = oci_load_balancer_backend_set.app.name
+  name                     = var.project_name
+  port                     = 80
+  protocol                 = "HTTP"
+}
+
 resource "oci_core_network_security_group" "public_lb" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = oci_core_vcn.app.id
@@ -74,10 +83,10 @@ resource "oci_core_network_security_group_security_rule" "public_lb_internet_ing
       max = 80
       min = 80
     }
-    source_port_range {
-      max = 80
-      min = 80
-    }
+    # source_port_range {
+    #   max = 80
+    #   min = 80
+    # }
   }
 }
 
@@ -95,10 +104,10 @@ resource "oci_core_network_security_group_security_rule" "public_lb_to_compute" 
       max = 80
       min = 80
     }
-    source_port_range {
-      max = 80
-      min = 80
-    }
+    # source_port_range {
+    #   max = 80
+    #   min = 80
+    # }
   }
 }
 
@@ -124,10 +133,10 @@ resource "oci_core_network_security_group_security_rule" "compute_from_public_lb
       max = 80
       min = 80
     }
-    source_port_range {
-      max = 80
-      min = 80
-    }
+    # source_port_range {
+    #   max = 80
+    #   min = 80
+    # }
   }
 }
 
