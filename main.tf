@@ -33,7 +33,8 @@ resource "oci_load_balancer_load_balancer" "public" {
     maximum_bandwidth_in_mbps = 10
     minimum_bandwidth_in_mbps = 10
   }
-  subnet_ids = [oci_core_subnet.app_load_balancer.id]
+  subnet_ids                 = [oci_core_subnet.app_load_balancer.id]
+  network_security_group_ids = [oci_core_network_security_group.public_lb.id]
 }
 
 resource "oci_load_balancer_backend_set" "app" {
@@ -106,6 +107,28 @@ resource "oci_core_network_security_group" "compute" {
   vcn_id         = oci_core_vcn.app.id
 
   display_name = "${var.project_name}-compute"
+}
+
+
+resource "oci_core_network_security_group_security_rule" "compute_from_public_lb" {
+  network_security_group_id = oci_core_network_security_group.compute.id
+
+  direction        = "INGRESS"
+  protocol         = "6"
+  destination      = oci_core_network_security_group.public_lb.id
+  destination_type = "NETWORK_SECURITY_GROUP"
+  stateless        = false
+
+  tcp_options {
+    destination_port_range {
+      max = 80
+      min = 80
+    }
+    source_port_range {
+      max = 80
+      min = 80
+    }
+  }
 }
 
 // TODO: Add database access to compute NSG.
