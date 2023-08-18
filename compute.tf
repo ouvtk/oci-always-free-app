@@ -25,6 +25,10 @@ data "cloudinit_config" "app_compute" {
 }
 
 resource "oci_core_instance_configuration" "app" {
+  lifecycle {
+    create_before_destroy = true
+  }
+
   compartment_id = data.oci_identity_compartment.app.id
   display_name   = var.project_name
 
