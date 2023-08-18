@@ -13,6 +13,17 @@ data "oci_core_image" "latest_oracle_linux_8" {
   image_id = try(data.oci_core_images.oracle_linux_8.images[0].id)
 }
 
+data "cloudinit_config" "app_compute" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "cloud-config.yaml"
+    content_type = "text/cloud-config"
+    content      = templatefile("${path.module}/scripts/cloud-init.yaml", {})
+  }
+}
+
 resource "oci_core_instance_configuration" "app" {
   compartment_id = data.oci_identity_compartment.app.id
   display_name   = var.project_name
@@ -21,7 +32,18 @@ resource "oci_core_instance_configuration" "app" {
     instance_type = "compute"
 
     launch_details {
+      compartment_id = data.oci_identity_compartment.app.id
+
+      create_vnic_details {
+        assign_public_ip = true
+        nsg_ids          = [oci_core_network_security_group.compute.id]
+      }
+
       display_name = var.project_name
+
+      metadata = {
+        user_data = data.cloudinit_config.app_compute.rendered
+      }
 
       shape = local.instance_shape
       shape_config {

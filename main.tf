@@ -42,11 +42,12 @@ resource "oci_load_balancer_backend_set" "app" {
   name   = "${var.project_name}-compute"
   policy = "IP_HASH"
 
+  // TODO: Enable access and error logging?
   // TODO: Make sure health checker works.
   health_checker {
     protocol = "HTTP"
     port     = 80
-    url_path = "/health"
+    url_path = "/"
   }
 }
 

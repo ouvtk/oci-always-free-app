@@ -22,8 +22,9 @@ resource "oci_core_subnet" "app_load_balancer" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = data.oci_core_vcn.app.id
 
-  cidr_block   = "10.0.1.0/24"
-  display_name = "${var.project_name}-lb"
+  cidr_block     = "10.0.1.0/24"
+  display_name   = "${var.project_name}-lb"
+  route_table_id = oci_core_route_table.app_load_balancer.id
 }
 
 // Instances subnet is meant to be private, but Always Free tier doesn't allow any NAT, only Internet Gateways.
@@ -31,8 +32,9 @@ resource "oci_core_subnet" "app_compute" {
   compartment_id = data.oci_identity_compartment.app.id
   vcn_id         = data.oci_core_vcn.app.id
 
-  cidr_block   = "10.0.2.0/24"
-  display_name = "${var.project_name}-compute"
+  cidr_block     = "10.0.2.0/24"
+  display_name   = "${var.project_name}-compute"
+  route_table_id = oci_core_route_table.app_compute.id
 }
 
 resource "oci_core_route_table" "app_load_balancer" {

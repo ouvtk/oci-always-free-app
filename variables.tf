@@ -16,6 +16,7 @@ variable "number_of_instances" {
   type        = number
 }
 
+// TODO: Check compartment_ocid instead. 
 variable "tenancy_ocid" {
   description = "The OCID of the root tenancy to create a new one within."
   type        = string

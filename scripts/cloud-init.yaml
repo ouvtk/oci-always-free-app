@@ -1,0 +1,16 @@
+#cloud-config
+
+# write_files:
+#  - path: "/root/user.sh"
+#    permissions: "0777"
+#    encoding: "gzip+base64"
+#    content: "here"
+
+runcmd:
+ - echo "Installing prerequisites first"
+ - yum install -y oracle-cloud-agent nginx
+ - echo "Launching nginx for health check"
+ - systemctl enable nginx --now
+
+final_message: "The system is finally up, after $UPTIME seconds"
+output: {all: '| tee -a /root/cloud-init-output.log'}
