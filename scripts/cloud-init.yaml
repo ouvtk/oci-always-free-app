@@ -1,18 +1,26 @@
-#cloud-config
+write_files:
+  - path: "/etc/systemd/system/the-app.service"
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Application service
+      After=network.target
 
-# write_files:
-#  - path: "/root/user.sh"
-#    permissions: "0777"
-#    encoding: "gzip+base64"
-#    content: "here"
+      [Service]
+      Type=simple
+      ExecStart=/app/${executable_name}
+
+      [Install]
+      WantedBy=multi-user.target
 
 runcmd:
- - echo "Installing prerequisites first"
- - yum install -y oracle-cloud-agent nginx
- - echo "Launching nginx for health check"
- - systemctl enable nginx --now
- - echo "Allowing port 80 on the firewall"
- - firewall-offline-cmd --add-port=80/tcp && systemctl restart firewalld
+  - echo "Installing prerequisites first"
+  - yum install -y oracle-cloud-agent
+  - echo "Downloading and launching the app"
+  - wget -O /app/${executable_name} ${download_app_from}
+  - systemctl enable the-app --now
+  - echo "Allowing port 80 on the firewall"
+  - firewall-offline-cmd --add-port=80/tcp && systemctl restart firewalld
 
 final_message: "The system is finally up, after $UPTIME seconds"
-output: {all: '| tee -a /root/cloud-init-output.log'}
+output: { all: "| tee -a /root/cloud-init-output.log" }

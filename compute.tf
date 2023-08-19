@@ -1,5 +1,6 @@
 locals {
-  instance_shape = "VM.Standard.A1.Flex"
+  instance_shape  = "VM.Standard.A1.Flex"
+  executable_name = "the-app"
 }
 
 data "oci_core_images" "oracle_linux_8" {
@@ -22,7 +23,16 @@ data "cloudinit_config" "app_compute" {
     content_type = "text/cloud-config"
     content = templatefile(
       "${path.module}/scripts/cloud-init.yaml",
-      { executable_path = "/app/main" }
+      {
+        download_app_from = join(
+          "",
+          [
+            "https://objectstorage.${var.region}.oraclecloud.com",
+            oci_objectstorage_preauthrequest.app-deploy.access_uri
+          ]
+        )
+        executable_name = local.executable_name
+      }
     )
   }
 }
