@@ -1,5 +1,7 @@
-# Infrastructure for Oracle Cloud Always Free resources
-Managed by terraform
+# Application on Oracle Cloud Always Free resources
+
+Attempt to provide a simple way to deploy an infrastructure with a running application within Oracle Cloud Infrastructure (OCI) using only Always Free resources.
+And the infrastucture is managed by terraform through OCI Resource Manager, no other backend considered.
 
 This is not production ready, for small non-sensitive projects only, or for proof-of-concepts.
 
@@ -16,6 +18,8 @@ Add what this infrastructure aims to manage (group by networking, compute etc):
  - network security groups
 
 Database?
+Parameter storage?
+Certificates?
 
 What about alerting, logging and monitoring?
 
