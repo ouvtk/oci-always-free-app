@@ -20,7 +20,10 @@ data "cloudinit_config" "app_compute" {
   part {
     filename     = "cloud-config.yaml"
     content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/scripts/cloud-init.yaml", {})
+    content = templatefile(
+      "${path.module}/scripts/cloud-init.yaml",
+      { executable_path = "/app/main" }
+    )
   }
 }
 

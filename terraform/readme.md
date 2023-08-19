@@ -31,4 +31,5 @@ Add what this infrastructure intentionally avoids:
  - correct tagging of resources
  - terraform state management (assumption is that resource manager is used)
  - how to securely deploy application into the instance
+ - autoscaling - it is possible with always free tier, but makes little sense to do it in a generic way without tuning it for specific application
 ```
