@@ -59,6 +59,7 @@ resource "oci_load_balancer_listener" "app" {
   name                     = var.project_name
   port                     = 80
   protocol                 = "HTTP"
+
 }
 
 resource "oci_core_network_security_group" "public_lb" {
@@ -83,10 +84,6 @@ resource "oci_core_network_security_group_security_rule" "public_lb_internet_ing
       max = 80
       min = 80
     }
-    # source_port_range {
-    #   max = 80
-    #   min = 80
-    # }
   }
 }
 
@@ -104,10 +101,6 @@ resource "oci_core_network_security_group_security_rule" "public_lb_to_compute" 
       max = 80
       min = 80
     }
-    # source_port_range {
-    #   max = 80
-    #   min = 80
-    # }
   }
 }
 
@@ -122,21 +115,17 @@ resource "oci_core_network_security_group" "compute" {
 resource "oci_core_network_security_group_security_rule" "compute_from_public_lb" {
   network_security_group_id = oci_core_network_security_group.compute.id
 
-  direction        = "INGRESS"
-  protocol         = "6"
-  destination      = oci_core_network_security_group.public_lb.id
-  destination_type = "NETWORK_SECURITY_GROUP"
-  stateless        = false
+  direction   = "INGRESS"
+  protocol    = "6"
+  stateless   = false
+  source      = oci_core_network_security_group.public_lb.id
+  source_type = "NETWORK_SECURITY_GROUP"
 
   tcp_options {
     destination_port_range {
       max = 80
       min = 80
     }
-    # source_port_range {
-    #   max = 80
-    #   min = 80
-    # }
   }
 }
 
