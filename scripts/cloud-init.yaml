@@ -17,6 +17,7 @@ runcmd:
   - echo "Installing prerequisites first"
   - yum install -y oracle-cloud-agent
   - echo "Downloading and launching the app"
+  - mkdir -p /app/
   - wget -O /app/${executable_name} ${download_app_from}
   - systemctl enable the-app --now
   - echo "Allowing port 80 on the firewall"
