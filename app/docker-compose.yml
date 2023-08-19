@@ -1,0 +1,10 @@
+version: '3' 
+services:
+  go-builder:
+    image: docker.io/golang:latest
+    volumes:
+      - .:/app/
+    environment:
+      - GOOS=linux
+      - GOARCH=arm64
+    command: "go build -o /app/_build/the-app /app/main.go"
