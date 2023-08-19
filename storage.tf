@@ -22,10 +22,12 @@ resource "oci_objectstorage_object" "app" {
 }
 
 resource "oci_objectstorage_preauthrequest" "app-deploy" {
-  bucket    = oci_objectstorage_bucket.deploy.id
+  depends_on = [oci_objectstorage_object.app]
+
+  bucket    = oci_objectstorage_bucket.deploy.name
   namespace = oci_objectstorage_bucket.deploy.namespace
 
-  name        = "${var.project_name}-app-deploy-${timestamp()}"
+  name        = "${var.project_name}-app-deploy-${formatdate("YYYYMMDDhhmmss", timestamp())}"
   access_type = "ObjectRead"
   object_name = oci_objectstorage_object.app.object
 
