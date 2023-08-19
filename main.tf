@@ -1,38 +1,13 @@
-// Do not do:
-// - Tagging
-// - User's Permissions (assumption is that there is a single admin that applies this project)
-//
-// TODO: 
-// Fetch:
-// - Tenancy
-//
-// Create:
-// - compartment
-// - VCN
-// - subnets
-// - internet gateway
-// - load balancer
-// - database
-// - network security groups
-// 
-// Deploy simple app serving HTTP REST API to get and create a resource a PoC.
-//
-// Alerting, logging and monitoring.
-// Terraform state management by OCI.
-
 resource "oci_load_balancer_load_balancer" "public" {
   compartment_id = data.oci_identity_compartment.app.id
   display_name   = "${var.project_name}-public-lb"
-
-  // TODO:
-  // network_security_group_ids = []
-
-  is_private = false
-  shape      = "flexible"
+  is_private     = false
+  shape          = "flexible"
   shape_details {
     maximum_bandwidth_in_mbps = 10
     minimum_bandwidth_in_mbps = 10
   }
+
   subnet_ids                 = [oci_core_subnet.app_load_balancer.id]
   network_security_group_ids = [oci_core_network_security_group.public_lb.id]
 }
@@ -42,9 +17,6 @@ resource "oci_load_balancer_backend_set" "app" {
 
   name   = "${var.project_name}-compute"
   policy = "IP_HASH"
-
-  // TODO: Enable access and error logging?
-  // TODO: Make sure health checker works.
   health_checker {
     protocol = "HTTP"
     port     = 80
@@ -59,7 +31,6 @@ resource "oci_load_balancer_listener" "app" {
   name                     = var.project_name
   port                     = 80
   protocol                 = "HTTP"
-
 }
 
 resource "oci_core_network_security_group" "public_lb" {
@@ -78,7 +49,6 @@ resource "oci_core_network_security_group_security_rule" "public_lb_internet_ing
   source      = "0.0.0.0/0"
   source_type = "CIDR_BLOCK"
   stateless   = false
-
   tcp_options {
     destination_port_range {
       max = 80
@@ -95,7 +65,6 @@ resource "oci_core_network_security_group_security_rule" "public_lb_to_compute" 
   destination      = oci_core_network_security_group.compute.id
   destination_type = "NETWORK_SECURITY_GROUP"
   stateless        = false
-
   tcp_options {
     destination_port_range {
       max = 80
@@ -120,7 +89,6 @@ resource "oci_core_network_security_group_security_rule" "compute_from_public_lb
   stateless   = false
   source      = oci_core_network_security_group.public_lb.id
   source_type = "NETWORK_SECURITY_GROUP"
-
   tcp_options {
     destination_port_range {
       max = 80
