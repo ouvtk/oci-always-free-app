@@ -37,28 +37,3 @@ resource "oci_core_subnet" "app_compute" {
   route_table_id = oci_core_route_table.app_compute.id
 }
 
-resource "oci_core_route_table" "app_load_balancer" {
-  compartment_id = data.oci_identity_compartment.app.id
-  vcn_id         = data.oci_core_vcn.app.id
-
-  display_name = "${var.project_name}-lb"
-  route_rules {
-    description       = "Route all egress towards the internet gateway"
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.internet_gw.id
-  }
-}
-
-resource "oci_core_route_table" "app_compute" {
-  compartment_id = data.oci_identity_compartment.app.id
-  vcn_id         = data.oci_core_vcn.app.id
-
-  display_name = "${var.project_name}-compute"
-  route_rules {
-    description       = "Route all egress towards the internet gateway"
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.internet_gw.id
-  }
-}
