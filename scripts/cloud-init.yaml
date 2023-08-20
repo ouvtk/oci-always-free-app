@@ -8,7 +8,7 @@ write_files:
 
       [Service]
       Type=simple
-      ExecStart=/app/${executable_name}
+      ExecStart=/usr/local/bin/${executable_name}
 
       [Install]
       WantedBy=multi-user.target
@@ -17,8 +17,12 @@ runcmd:
   - echo "Installing prerequisites first"
   - yum install -y oracle-cloud-agent
   - echo "Downloading and launching the app"
-  - mkdir -p /app/
-  - wget -O /app/${executable_name} ${download_app_from}
+  # Installing it into the default binaries location /usr/local/bin to avoid SELinux blocking it.
+  - >
+    mkdir -p /usr/local/bin/
+    && wget -O /usr/local/bin/${executable_name} ${download_app_from}
+    && chmod +x /usr/local/bin/${executable_name}
+
   - systemctl enable the-app --now
   - echo "Allowing port 80 on the firewall"
   - firewall-offline-cmd --add-port=80/tcp && systemctl restart firewalld
