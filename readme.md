@@ -5,6 +5,17 @@ And the infrastucture is managed by terraform through OCI Resource Manager, no o
 
 This is not production ready, for small non-sensitive projects only, or for proof-of-concepts.
 
+## Get started
+
+TODO: Yes, I need to create a script to do this.
+
+To use it with OCI Resource Manager, go there and create a new stack.
+Then:
+1. Go to `app` folder to build the app (there must be `./app/_build/the-app` executable)
+2. Zip everything into a single archive: all `.tf` files, `app` folder, `scripts` folder.
+3. Drop this zip as a source for the OCI Resource Manager stack.
+4. Apply.
+
 ## What can I do?
 
 Due to Always Free limitations:
