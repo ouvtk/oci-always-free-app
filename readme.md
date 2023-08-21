@@ -16,7 +16,7 @@ After that:
 3. Drop this zip as a source for the OCI Resource Manager stack.
 4. Apply.
 
-## What can I do?
+## What can it do?
 
 Due to Always Free limitations:
  - Instances has to stay in a public subnet to reach out to the internet. Otherwise they should be in the private subnet with a NAT gateway.
