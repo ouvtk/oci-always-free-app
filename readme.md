@@ -7,12 +7,12 @@ This is not production ready, for small non-sensitive projects only, or for proo
 
 ## Get started
 
-TODO: Yes, I need to create a script to do this.
-
-To use it with OCI Resource Manager, go there and create a new stack.
-Then:
-1. Go to `app` folder to build the app (there must be `./app/_build/the-app` executable)
-2. Zip everything into a single archive: all `.tf` files, `app` folder, `scripts` folder.
+Assumption is that you have Linux alike system (for example, WSL for Windows), or do some steps yourself.
+To use a solution with OCI Resource Manager, go there and create a new stack.
+After that:
+1. Call `./package.sh` to have an archive ready, or:
+    - Go to `app` folder to build the app (there must be `./app/_build/the-app` executable)
+    - Zip everything into a single archive: all `.tf` files, `app` folder, `scripts` folder.
 3. Drop this zip as a source for the OCI Resource Manager stack.
 4. Apply.
 
