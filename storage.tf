@@ -21,7 +21,7 @@ resource "oci_objectstorage_object" "app" {
   source = "${path.module}/app/_build/${local.executable_name}"
 }
 
-resource "oci_objectstorage_preauthrequest" "app-deploy" {
+resource "oci_objectstorage_preauthrequest" "app_deploy" {
   depends_on = [oci_objectstorage_object.app]
 
   bucket    = oci_objectstorage_bucket.deploy.name

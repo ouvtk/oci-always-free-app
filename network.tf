@@ -6,6 +6,10 @@ resource "oci_core_vcn" "app" {
   cidr_blocks = ["10.0.0.0/16"]
 }
 
+resource "oci_core_default_security_list" "app_default" {
+  id = oci_core_vcn.app.default_security_list_id
+}
+
 data "oci_core_vcn" "app" {
   vcn_id = oci_core_vcn.app.id
 }

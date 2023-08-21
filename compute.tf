@@ -28,7 +28,7 @@ data "cloudinit_config" "app_compute" {
           "",
           [
             "https://objectstorage.${var.region}.oraclecloud.com",
-            oci_objectstorage_preauthrequest.app-deploy.access_uri
+            oci_objectstorage_preauthrequest.app_deploy.access_uri
           ]
         )
         executable_name = local.executable_name
